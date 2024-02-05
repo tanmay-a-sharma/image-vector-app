@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "extract-files": "^13.0.0",
+    "graphql-request": "^6.1.0",
+    "uuid": "^9.0.1",
     "weaviate-ts-client": "^2.0.0"
   }
 }
