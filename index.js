@@ -1,11 +1,18 @@
 import weaviate from 'weaviate-ts-client';
 import fs from 'fs';
 
+import MemeManager from './MemeManager.js';
+
+
+
+
 
 const client = weaviate.client({
     scheme: 'http',
     host: 'localhost:8080',
 });
+
+
 
 const schemaRes = await client.schema.getter().do();
 
@@ -44,6 +51,10 @@ if (!existingClasses.classes.some(c => c.class === className)){
         .do();
 }
 
+// this is going to remove all objects from the meme class
+// const memeManager = new MemeManager(client);
+// await memeManager.removeAllMemes();
+
 const img = fs.readFileSync('./img/tanmaypic.png');
 const b64 = Buffer.from(img).toString('base64');
 
@@ -72,14 +83,20 @@ fs.writeFileSync('result.png',result, 'base64');
 
 
 
-// we are checking here to see waht images are in our meme class
-const t = await client.graphql.get()
-    .withClassName('Meme')
-    .withFields(['image'])
-    .do();
+// // we are checking here to see waht images are in our meme class
+// const t = await client.graphql.get()
+//     .withClassName('Meme')
+//     .withFields(['image'])
+//     .do();
+//
+// // here we are creating a new meme from the class
+// t.data.Get.Meme.forEach((meme, index) => {
+//     const image = meme.image;
+//     fs.writeFileSync(`meme${index}.png`, image, 'base64');
+// });
 
-// here we are creating a new meme from the class
-t.data.Get.Meme.forEach((meme, index) => {
-    const image = meme.image;
-    fs.writeFileSync(`meme${index}.png`, image, 'base64');
-});
+
+
+
+const memeClass = await client.schema.classGetter().withClassName('Meme').do();
+console.log(memeClass);
