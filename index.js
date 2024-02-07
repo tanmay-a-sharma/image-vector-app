@@ -1,4 +1,6 @@
 import weaviate from 'weaviate-ts-client';
+import fs from 'fs';
+
 
 const client = weaviate.client({
     scheme: 'http',
@@ -32,7 +34,21 @@ const schemaConfig = {
     ]
 }
 
-await client.schema
-    .classCreator()
-    .withClass(schemaConfig)
-    .do();
+const className = 'Meme';
+const existingClasses = await client.schema.getter().do();
+
+if (!existingClasses.classes.some(c => c.class === className)){
+    await client.schema
+        .classCreator()
+        .withClass(schemaConfig)
+        .do();
+}
+
+const img = fs.readFileSync('./img/tanmaypic.png');
+const b64 = Buffer.from(img).toString('base64');
+
+const res = await client.data.creator().withClassName('Meme').withProperties(
+    {
+        image:b64,
+        text:'This is a meme',
+    }).do();
